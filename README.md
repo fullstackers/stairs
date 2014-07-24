@@ -12,19 +12,19 @@ var stairs = require('stairs');
 var extractData = stairs('extract data')
   .step('query api', function (scope, next) {
     http.get(scope.url, function (res) {
-      var body = scope.body = '';
-      res.on('data', function (chunk) { body = body + chunk; });
+      scope.body = '';
+      res.on('data', function (chunk) { scope.body = scope.body + chunk; });
       res.on('end', next);
       res.on('error', next);
     });
   })
   .step('parse json', function (scope, next) {
-    try { scope.body = JSON.parse(scope.data); } 
+    try { scope.data = JSON.parse(scope.body); } 
     catch(e) { return next(e) };
     finally { next() }
   })
   .step('grab element', function (scope, next) {
-    scope.extracted = scope.body.some.field;
+    scope.extracted = scope.data.some.field;
     next()
   })
   .on('error', function (err, scope) { 
@@ -42,7 +42,9 @@ var urls = [
   'http://some.api?id=1'
   'http://some.api?id=2'
   'http://some.api?id=2'
-].forEach(extractData);
+].forEach(function (url) {
+  extractData({url: url});
+});
 ```
 
 # Features

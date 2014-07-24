@@ -1,4 +1,5 @@
 util = require 'util'
+EventEmitter = require('events').EventEmitter
 
 describe 'lib', ->
   
@@ -87,12 +88,11 @@ describe 'lib', ->
       Given -> @a = (scope, next) -> scope.a = 1; next()
       Given -> @b = (scope, next) -> scope.b = 1; next()
       Given -> @c = (scope, next) -> scope.c = 2; next()
-      Given -> @stairs.step @a
-      Given -> @stairs.step @b
-      Given -> @stairs.step @c
+      Given -> @stairs.step 'a', @a
+      Given -> @stairs.step 'b', @b
+      Given -> @stairs.step 'c', @c
       Given -> @scope = {}
-      When -> @stairs.run @scope
+      When (done) -> @stairs.run @scope, done
       Then -> expect(@scope.a).toBe 1
       And -> expect(@scope.b).toBe 1
-      And -> expect(@scope.c).toBe 1
-
+      And -> expect(@scope.c).toBe 2
