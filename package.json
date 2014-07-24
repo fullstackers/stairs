@@ -1,26 +1,30 @@
 {
-  "name": "skeleton",
+  "name": "stairs",
   "version": "0.0.0",
-  "description": "A skeleton for turbonetix projects",
+  "description": "Organize your application's steps into stairs.",
   "main": "index.js",
   "scripts": {
     "test": "grunt"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/turbonetix/skeleton.git"
+    "url": "git://github.com/turbonetix/stairs.git"
   },
   "keywords": [
-    "bus.io",
-    "monitor",
-    "middleware"
+    "middleware",
+    "extraction",
+    "transformation",
+    "loading",
+    "organization",
+    "stair",
+    "step"
   ],
   "author": "Nathan G. Romano",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/turbonetix/skeleton/issues"
+    "url": "https://github.com/turbonetix/stairs/issues"
   },
-  "homepage": "https://github.com/turbonetix/skeleton",
+  "homepage": "https://github.com/turbonetix/stairs",
   "devDependencies": {
     "sandboxed-module": "^1.0.0",
     "coffee-script": "^1.7.1",
