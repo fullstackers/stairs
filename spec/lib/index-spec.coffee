@@ -97,17 +97,34 @@ describe 'lib', ->
       And -> expect(@scope.b).toBe 1
       And -> expect(@scope.c).toBe 2
 
-    describe '#end', ->
-      
-      Given -> @a = (scope, next) -> scope.a = 1; next()
-      Given -> @b = (scope, next) -> scope.b = 1; @end(); next()
-      Given -> @c = (scope, next) -> scope.c = 2; next()
-      Given -> @stairs.step 'a', @a
-      Given -> @stairs.step 'b', @b
-      Given -> @stairs.step 'c', @c
-      Given -> @scope = {}
-      When (done) -> @stairs.run @scope, done
-      Then -> expect(@scope.a).toBe 1
-      And -> expect(@scope.b).toBe 1
-      And -> expect(@scope.c).toBe undefined
+    describe '.Context', ->
+
+      describe '#end', ->
+        
+        Given -> @a = (scope, next) -> scope.a = 1; next()
+        Given -> @b = (scope, next) -> scope.b = 1; @end(); next()
+        Given -> @c = (scope, next) -> scope.c = 2; next()
+        Given -> @stairs.step 'a', @a
+        Given -> @stairs.step 'b', @b
+        Given -> @stairs.step 'c', @c
+        Given -> @scope = {}
+        When (done) -> @stairs.run @scope, done
+        Then -> expect(@scope.a).toBe 1
+        And -> expect(@scope.b).toBe 1
+        And -> expect(@scope.c).toBe undefined
+
+      describe '#skip', ->
+
+        Given -> @a = (scope, next) -> scope.a = 1; @skip 'c'
+        Given -> @b = (scope, next) -> scope.b = 1; next()
+        Given -> @c = (scope, next) -> scope.c = 2; next()
+        Given -> @stairs.step 'a', @a
+        Given -> @stairs.step 'b', @b
+        Given -> @stairs.step 'c', @c
+        Given -> @scope = {}
+        When (done) -> @stairs.run @scope, done
+        Then -> expect(@scope.a).toBe 1
+        And -> expect(@scope.b).toBe undefined
+        And -> expect(@scope.c).toBe 2
+
 

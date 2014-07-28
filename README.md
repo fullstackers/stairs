@@ -21,7 +21,10 @@ var extractData = stairs('extract data')
   .step('parse json', function ($) {
     try { $.data = JSON.parse($.body); } 
     catch(e) { return next(e) };
-    finally { this.next() }
+    finally { this.skip('skip to') }
+  })
+  .step('skip to', function ($, next) {
+    this.next();
   })
   .step('grab element', function ($, next) {
     $.extracted = $.data.some.field;
@@ -160,15 +163,25 @@ s.step('query api', function ($, next) {
 });
 ```
 
-### Stairs.Context#next()
+### Stairs.Context#skip(title:String)
 
-You can invoke `next` from the callback parameter `next` or `this.next()`.
+You can skip to a particular step given the `title` of that step by calling `this.skip('skip to')`.
 
 ```javascript
 s.step('parse json', function ($, next) {
   try { $.data = JSON.parse($.body); } 
   catch(e) { return next(e) };
-  finally { this.next() }
+  finally { this.skip('skip to') }
+});
+```
+
+### Stairs.Context#next()
+
+You can invoke `next` from the callback parameter `next` or `this.next()`.
+
+```javascript
+s.step('skip to', function ($, next) {
+  this.next();
 });
 ```
 

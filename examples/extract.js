@@ -21,7 +21,10 @@ var extractData = stairs('extract data')
     console.log('the body \'%s\'', $.body);
     try { $.data = JSON.parse($.body); } 
     catch(e) { return next(e) }
-    finally { this.next() }
+    finally { this.skip('skip to') }
+  })
+  .step('skip to', function ($, next) {
+    next(); 
   })
   .step('grab element', function ($, next) {
     console.log('the data %j', $.data);
