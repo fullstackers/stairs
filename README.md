@@ -177,11 +177,11 @@ s.step('parse json', function ($, next) {
 You can end the process by calling `this.end()` in your handler.
 
 ```javascript
-.step('grab element', function ($, next) {
+s.step('grab element', function ($, next) {
   console.log('the data %j', $.data);
   $.extracted = $.data.some.field;
   this.end();
-})
+});
 ```
 
 ### Events
