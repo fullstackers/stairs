@@ -1,6 +1,6 @@
 {
   "name": "stairs",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Organize your application's steps into stairs.",
   "main": "index.js",
   "scripts": {

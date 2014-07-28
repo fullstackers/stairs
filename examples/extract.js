@@ -8,34 +8,34 @@ srv.listen(3000);
 
 var stairs = require('./..');
 var extractData = stairs('extract data')
-  .step('query api', function (scope, next) {
-    console.log('querying "%s"', scope.url);
-    http.get(scope.url, function (res) {
-      scope.body = '';
-      res.on('data', function (chunk) { scope.body = scope.body + chunk; });
+  .step('query api', function ($, next) {
+    console.log('querying "%s"', $.url);
+    http.get($.url, function (res) {
+      $.body = '';
+      res.on('data', function (chunk) { $.body = $.body + chunk; });
       res.on('end', next);
       res.on('error', next);
     });
   })
-  .step('parse json', function (scope, next) {
-    console.log('the body \'%s\'', scope.body);
-    try { scope.data = JSON.parse(scope.body); } 
+  .step('parse json', function ($) {
+    console.log('the body \'%s\'', $.body);
+    try { $.data = JSON.parse($.body); } 
     catch(e) { return next(e) }
-    finally { next() }
+    finally { this.next() }
   })
-  .step('grab element', function (scope, next) {
-    console.log('the data %j', scope.data);
-    scope.extracted = scope.data.some.field;
-    next()
+  .step('grab element', function ($, next) {
+    console.log('the data %j', $.data);
+    $.extracted = $.data.some.field;
+    this.end();
   })
   .on('step', function (title, index, count) {
     console.log('on step "%s" which is %s/%s of process "%s"', title, index, count, this.title);
   })
-  .on('error', function (err, scope) { 
+  .on('error', function (err, $) { 
     console.error(err);
   }) 
-  .on('done', function (scope) {
-    console.log('extracted %j', scope.extracted);
+  .on('done', function ($) {
+    console.log('extracted %j', $.extracted);
   });
 
 var urls = [
@@ -48,7 +48,7 @@ urls.forEach(function (url) {
 });
 
 var i =0;
-function done (scope) {
+function done ($) {
   if (++i >= 3) {
     console.log('done.');
     process.exit(0);

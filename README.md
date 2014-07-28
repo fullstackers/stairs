@@ -10,28 +10,31 @@ Here we are building an *extraction* process to extract data from some API.
 var stairs = require('stairs');
 
 var extractData = stairs('extract data')
-  .step('query api', function (scope, next) {
-    http.get(scope.url, function (res) {
-      scope.body = '';
-      res.on('data', function (chunk) { scope.body = scope.body + chunk; });
+  .step('query api', function ($, next) {
+    http.get($.url, function (res) {
+      $.body = '';
+      res.on('data', function (chunk) { $.body = $.body + chunk; });
       res.on('end', next);
       res.on('error', next);
     });
   })
-  .step('parse json', function (scope, next) {
-    try { scope.data = JSON.parse(scope.body); } 
+  .step('parse json', function ($) {
+    try { $.data = JSON.parse($.body); } 
     catch(e) { return next(e) };
-    finally { next() }
+    finally { this.next() }
   })
-  .step('grab element', function (scope, next) {
-    scope.extracted = scope.data.some.field;
-    next()
+  .step('grab element', function ($, next) {
+    $.extracted = $.data.some.field;
+    this.end();
   })
-  .on('error', function (err, scope) { 
+  .on('step', function (title, index, count) {
+    console.log('on step "%s" which is %s/%s of process "%s"', title, index, count, this.title);
+  });
+  .on('error', function (err, $) { 
     console.error(err);
   }) 
-  .on('done', function (err, scope) {
-    console.log('extracted %j', scope.extracted);
+  .on('done', function (err, $) {
+    console.log('extracted %j', $.extracted);
   });
 ```
 
@@ -53,6 +56,165 @@ var urls = [
 * Simple
 * Fast
 * Easy
+
+# API
+
+## Stairs
+
+```javascript
+var stairs = require('stairs');
+```
+
+### Stairs#()
+
+Creates a new instance.
+
+```javascript
+var s = stairs();
+```
+
+### Stairs#(title:String)
+
+Creats a new instance with a `title`.
+
+```javascript
+var s = stairs('extraction process');
+```
+
+### Stairs#()
+
+Executes the steps in the order in which they were added.
+
+```javascript
+s();
+```
+
+### Stairs#(cb:Function)
+
+Executes the steps in the order in which they were added, and when done
+invokes the callback `cb`.
+
+```javascript
+s(function ($) {
+  console.log($);
+});
+```
+
+### Stairs#(scope:Object, cb:Function)
+
+Executes the steps in the order in which they were added given a `scope` and when done
+invokes the callback `cb`.
+
+```javascript
+s({}, function ($) {
+  console.log($);
+});
+```
+
+### Stairs#run(scope:Object)
+
+Executes the steps in the order in which they were added given a `scope`.
+
+```javascript
+s.run({});
+```
+
+### Stairs#run(cb:Function)
+
+Executes the steps in the order in which they were added, and when done
+invokes the callback `cb`.
+
+```javascript
+s.run(function ($) {
+  console.log($);
+});
+```
+
+### Stairs#run(scope:Object, cb:Function)
+
+Executes the steps in the order in which they were added given a `scope` and when done
+invokes the callback `cb`.
+
+```javascript
+s.run({}, function ($) {
+  console.log($);
+});
+```
+
+### Stairs#step(title:String, fn:Function)
+
+Adds a step.  The step function `fn` when invoked will get all
+the parameters in the scope.  For most application you may only use
+one.  The last argument will be the `next` function that will invoke the
+next step.  You may pass an `Error` object when calling `next` in order to
+stop the flow of execution and handle the error.
+
+```javascript
+s.step('query api', function ($, next) {
+  http.get($.url, function (res) {
+    $.body = '';
+    res.on('data', function (chunk) { $.body = $.body + chunk; });
+    res.on('end', next);
+    res.on('error', next);
+  });
+});
+```
+
+### Stairs.Context#next()
+
+You can invoke `next` from the callback parameter `next` or `this.next()`.
+
+```javascript
+s.step('parse json', function ($, next) {
+  try { $.data = JSON.parse($.body); } 
+  catch(e) { return next(e) };
+  finally { this.next() }
+});
+```
+
+### Stairs.Context#end()
+
+You can end the process by calling `this.end()` in your handler.
+
+```javascript
+.step('grab element', function ($, next) {
+  console.log('the data %j', $.data);
+  $.extracted = $.data.some.field;
+  this.end();
+})
+```
+
+### Events
+
+#### step
+
+The `step` event is triggered for each step when being executed.
+
+```javascript
+s.on('step', function (title, i, count) {
+  console.log('we are processing step "%s" which is step %s of %s', title, i, count);
+});
+```
+
+#### done
+
+The `done` event is triggered when the process is complete.
+
+```javascript
+s.on('done', function ($) {
+  console.log('done.');
+});
+```
+
+#### error
+
+The `error` event is triggered whenever we receive an error.
+
+```javascript
+s.on('error', function (err, $) {
+  console.error(err);
+});
+```
 
 # Installation and Environment Setup
 
