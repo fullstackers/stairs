@@ -77,6 +77,18 @@ describe 'lib', ->
       When -> @res = @stairs.step @title, @fn
       Then -> expect(@fn.title).toBe @title
       And -> expect(@steps[0]).toBe @fn
+
+    describe '#step(title:String,exclude:Boolean,fn:Function)', ->
+
+      Given -> @title1 = 'Step 1'
+      Given -> @fn1 = ->
+      Given -> @title2 = 'Step 2'
+      Given -> @fn2 = ->
+      Given -> @steps = []
+      Given -> spyOn(@stairs, 'steps').andReturn @steps
+      When -> @res = @stairs.step(@title1, true, @fn1).step(@title2, @fn2)
+      Then -> expect(@fn2.title).toBe @title2
+      And -> expect(@steps[0]).toBe @fn2
     
     describe '#steps', ->
 
