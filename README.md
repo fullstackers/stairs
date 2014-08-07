@@ -163,6 +163,23 @@ s.step('query api', function ($, next) {
 });
 ```
 
+### Stairs#step(title:String, exclude:Boolean, fn:Function)
+
+Conditionally adds a step.
+
+```javascript
+s.step('query api', options.skipQuery, function ($, next) {
+  http.get($.url, function (res) {
+    $.body = '';
+    res.on('data', function (chunk) { $.body = $.body + chunk; });
+    res.on('end', next);
+    res.on('error', next);
+  });
+});
+```
+
+The "query api" step will not be added if `options.skipQuery` is true.
+
 ### Stairs.Context#skip(title:String)
 
 You can skip to a particular step given the `title` of that step by calling `this.skip('skip to')`.
