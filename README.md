@@ -128,7 +128,7 @@ Executes the steps in the order in which they were added, and when done
 invokes the callback `cb`.
 
 ```javascript
-s.run(function ($) {
+s.run(function (err, $) {
   console.log($);
 });
 ```
@@ -139,7 +139,7 @@ Executes the steps in the order in which they were added given a `scope` and whe
 invokes the callback `cb`.
 
 ```javascript
-s.run({}, function ($) {
+s.run({}, function (err, $) {
   console.log($);
 });
 ```
