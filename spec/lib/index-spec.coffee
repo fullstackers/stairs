@@ -104,10 +104,13 @@ describe 'lib', ->
       Given -> @stairs.step 'b', @b
       Given -> @stairs.step 'c', @c
       Given -> @scope = {}
-      When (done) -> @stairs.run @scope, done
+      When (done) -> @stairs.run @scope, =>
+        @args = [].slice.call(arguments)
+        done()
       Then -> expect(@scope.a).toBe 1
       And -> expect(@scope.b).toBe 1
       And -> expect(@scope.c).toBe 2
+      And -> expect(@args).toEqual [null, @scope]
 
     describe '.Context', ->
 
